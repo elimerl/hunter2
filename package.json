@@ -1,0 +1,42 @@
+{
+  "name": "hunter2",
+  "version": "0.1.0",
+  "description": "A minimal, modular Express authentication system.",
+  "main": "lib/index.js",
+  "repository": "https://github.com/elimerl/hunter2",
+  "author": "elimerl",
+  "license": "MIT",
+  "private": false,
+  "files": [
+    "lib/**/*",
+    "types/**/*"
+  ],
+  "scripts": {
+    "test": "ava",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@ava/typescript": "^3.0.1",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/express": "^4",
+    "@types/node": "^18.7.3",
+    "ava": "^4.3.1",
+    "sequelize": "^6.21.3",
+    "sqlite3": "^5.0.11",
+    "typescript": "^4.7.4"
+  },
+  "ava": {
+    "typescript": {
+      "rewritePaths": {
+        "src/": "lib/"
+      },
+      "compile": false
+    }
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cookie-parser": "^1",
+    "express": "^4",
+    "nanoid": "^3"
+  }
+}
