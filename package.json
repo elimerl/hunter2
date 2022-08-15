@@ -13,7 +13,8 @@
     "types/**/*"
   ],
   "scripts": {
-    "test": "c8 ava",
+    "test": "ava",
+    "coverage": "c8 ava",
     "build": "tsc",
     "docs": "typedoc src/index.ts"
   },
