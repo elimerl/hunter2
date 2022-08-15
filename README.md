@@ -16,6 +16,10 @@ yarn:
 yarn add hunter2
 ```
 
+## Docs
+
+Docs are available at [elimerl.github.io/hunter2/](https://elimerl.github.io/hunter2/).
+
 ## Examples
 
 More advanced examples are in the examples folder.
@@ -55,3 +59,7 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 ```
+
+## Contributing
+
+Clone the repository, use `yarn`, and make changes. Write tests!
