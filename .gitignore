@@ -131,3 +131,5 @@ dist
 
 lib
 types
+coverage
+docs

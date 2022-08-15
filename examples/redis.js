@@ -1,15 +1,32 @@
-import express from "express";
+import express, { urlencoded } from "express";
 import cookieParser from "cookie-parser";
 import { Auth } from "../lib/index.js";
+import { createClient } from "redis";
 
 const app = express();
 const port = 3000;
-const authentication = new Auth();
+const client = createClient();
+client.connect();
+const redisStore = (client) => {
+  return {
+    set: async (sid, user) => {
+      await client.set(sid, user);
+    },
+    get: async (sid) => {
+      return (await client.exists(sid)) ? await client.get(sid) : null;
+    },
+    remove: async (sid) => {
+      await client.del(sid);
+    },
+  };
+};
+const authentication = new Auth({
+  sessionStore: redisStore(client),
+});
 app.use(cookieParser());
-// this has to be AFTER cookieParser()
 app.use(authentication.middleware);
 
-authentication.addAuth("dummy", async (req) => {
+authentication.addAuth("local", async (req) => {
   // This function returns an object {message: "error message"} or the username of who is signed in.
   // Usually this would interact with a DB, but this example will always be logged in as "example-user"
   return "example-user";
@@ -44,8 +61,8 @@ Hello World!<br/> Login form: <form action="/signin" method="POST"><input type="
 });
 app.post(
   "/signin",
-  express.urlencoded({ extended: false }),
-  authentication.authenticate("dummy", true),
+  urlencoded({ extended: false }),
+  authentication.authenticate("local", true),
   (req, res) => {
     if (req.authError) {
       res.send(req.authError);

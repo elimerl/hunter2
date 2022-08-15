@@ -2,19 +2,30 @@
 
 hunter2 is a minimal, modular authentication library for Express.
 
+## Installation
+
+npm:
+
+```
+npm install hunter2
+```
+
+yarn:
+
+```
+yarn add hunter2
+```
+
 ## Examples
 
-More advanced examples are in [examples/](examples/)
+More advanced examples are in the examples folder.
+
 Very basic example, without any database:
 
 ```js
 import express from "express";
 import cookieParser from "cookie-parser";
 import auth from "hunter2";
-// using require:
-// const express = require("express");
-// const cookieParser = require("cookie-parser");
-// const auth = require("hunter2");
 
 const app = express();
 const port = 3000;

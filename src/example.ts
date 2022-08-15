@@ -1,6 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import { Auth } from "../lib/index.js";
+import { Auth } from "./index.js";
 
 const app = express();
 const port = 3000;

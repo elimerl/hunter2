@@ -1,7 +1,12 @@
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const auth = require("../lib/index");
-const { Sequelize, DataTypes } = require("sequelize");
+/// IMPORTANT
+/// This example stores passwords in plain text. DO NOT DO THIS! This is terrible for security and only acceptable because of how basic this example is.
+/// For secure password storage, read SECURITY.md.
+/// IMPORTANT
+
+import express, { urlencoded } from "express";
+import cookieParser from "cookie-parser";
+import { Auth } from "../lib/index.js";
+import { Sequelize, DataTypes } from "sequelize";
 
 const sequelize = new Sequelize("sqlite::memory:");
 const Account = sequelize.define("Account", {
@@ -9,13 +14,14 @@ const Account = sequelize.define("Account", {
   password: DataTypes.STRING,
 });
 Account.sync();
+
 const app = express();
 const port = 3000;
-const authentication = auth.default();
+const authentication = auth();
 app.use(cookieParser());
 app.use(authentication.middleware);
 
-authentication.addAuth("local", async (req, res) => {
+authentication.addAuth("local", async (req) => {
   const username = req.body.username;
   const password = req.body.password;
 
@@ -27,7 +33,7 @@ authentication.addAuth("local", async (req, res) => {
     };
   }
 
-  const ok = await bcrypt.compare(password, user.password);
+  const ok = password === user.password;
   if (ok) {
     return username;
   } else {
@@ -38,7 +44,7 @@ authentication.addAuth("local", async (req, res) => {
 });
 app.get("/", (req, res) => {
   if (req.user)
-    res.send(`
+    return res.send(`
   <!DOCTYPE html>
 <html>
 <head>
@@ -50,7 +56,7 @@ Hello ${req.user}!<br/> Sign out: <form action="/signout" method="GET"><input ty
 </body>
 </html>`);
   else
-    res.send(
+    return res.send(
       `
       <!DOCTYPE html>
 <html>
@@ -58,7 +64,7 @@ Hello ${req.user}!<br/> Sign out: <form action="/signout" method="GET"><input ty
 	<meta charset='utf-8'>
 </head>
 <body>
-Hello World!<br/> Signup form: <form action="/signup" method="POST">Username <input type="text" name="username"><br/>Password <input type="password" name="password"><br/><input type="submit"></form>
+To test: sign up, then sign out, then sign in.<br/>Don't put any real passwords here, <a href="https://jojozhuang.github.io/architecture/how-to-store-passwords-in-a-secure-way/">THEY ARE STORED IN PLAINTEXT.</a> (read that article)<br/> Signup form: <form action="/signup" method="POST">Username <input type="text" name="username"><br/>Password <input type="password" name="password"><br/><input type="submit"></form>
 	<br/>
   Login form: <form action="/signin" method="POST">Username <input type="text" name="username"><br/>Password <input type="password" name="password"><br/><input type="submit"></form>
   </body>
@@ -67,37 +73,33 @@ Hello World!<br/> Signup form: <form action="/signup" method="POST">Username <in
 });
 app.post(
   "/signin",
-  express.urlencoded({ extended: false }),
+  urlencoded({ extended: false }),
   authentication.authenticate("local", true),
   (req, res) => {
-    res.redirect("/");
+    if (req.authError) {
+      res.send(req.authError);
+    }
+    return res.redirect("/");
   }
 );
-app.post("/signup", express.urlencoded({ extended: false }), (req, res) => {
+app.post("/signup", urlencoded({ extended: false }), (req, res) => {
   if (req.user) {
     res.status(400);
-    res.send("already signed in");
-    return;
+    return res.send("already signed in");
   }
   const username = req.body.username;
   if (!/^[a-z][a-zA-Z0-9_]*$/g.test(username)) {
     res.status(400);
-    res.json({
-      type: "error",
-      message:
-        "invalid username; must start with a letter and cannot contain spaces or dashes",
-    });
-    return;
+    return res.send(
+      "invalid username; must start with a letter and cannot contain spaces or dashes"
+    );
   }
   const password = req.body.password;
-  /// IMPORTANT
-  /// This example stores passwords in plain text. DO NOT DO THIS! This is terrible for security and only acceptable because of how basic this is.
-  /// For secure password storage, read SECURITY.md.
-  /// IMPORTANT
+
   Account.findByPk(username).then((user) => {
     if (user != null) {
       res.status(400);
-      res.json({ type: "error", message: "username taken" });
+      return res.send("username taken");
       return;
     }
     Account.create({
@@ -105,11 +107,10 @@ app.post("/signup", express.urlencoded({ extended: false }), (req, res) => {
       password: password,
     }).then((created) => {
       req.login(username).then(() => {
-        res.send({ type: "success" });
+        return res.redirect("/");
       });
     });
   });
-  res.redirect("/");
 });
 app.get("/signout", (req, res) => {
   req.logout().then(() => {
