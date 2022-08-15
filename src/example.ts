@@ -23,7 +23,9 @@ app.get("/", (req, res) => {
 <meta charset='utf-8'>
 </head>
 <body>
-Hello ${req.user}!<br/> Sign out: <form action="/signout" method="GET"><input type="submit"></form>
+Hello ${req.user}!
+<br/>
+Sign out: <form action="/signout" method="GET"><input type="submit"></form>
 
 </body>
 </html>`);
@@ -36,7 +38,9 @@ Hello ${req.user}!<br/> Sign out: <form action="/signout" method="GET"><input ty
 	<meta charset='utf-8'>
 </head>
 <body>
-Hello World!<br/> Login form: <form action="/signin" method="POST"><input type="submit"></form>
+Hello World!
+<br/>
+Login form: <form action="/signin" method="POST"><input type="submit"></form>
 	
 </body>
 </html>`
