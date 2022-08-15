@@ -1,6 +1,6 @@
 {
   "name": "hunter2",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A minimal, modular Express authentication system.",
   "main": "lib/index.js",
   "repository": "https://github.com/elimerl/hunter2",

@@ -1,5 +1,7 @@
 # hunter2
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/elimerl/hunter2/Node.js%20CI) ![npm](https://img.shields.io/npm/v/hunter2)
+
 hunter2 is a minimal, modular authentication library for Express.
 
 ## Installation
