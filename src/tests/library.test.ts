@@ -30,7 +30,7 @@ test("dummy authentication", async (t) => {
   const authentication = new Auth();
   const app = express();
   app.use(cookieParser());
-  app.use(authentication.middleware);
+  app.use(authentication.middleware());
   authentication.addAuth("dummy", async (req) => {
     return "test";
   });
@@ -60,7 +60,7 @@ test("dummy sign up and sign out", async (t) => {
   const authentication = new Auth();
   const app = express();
   app.use(cookieParser());
-  app.use(authentication.middleware);
+  app.use(authentication.middleware());
   authentication.addAuth("dummy", async (req) => {
     return "test";
   });
@@ -101,7 +101,7 @@ test("handle it myself", async (t) => {
   const authentication = new Auth();
   const app = express();
   app.use(cookieParser());
-  app.use(authentication.middleware);
+  app.use(authentication.middleware());
   authentication.addAuth("dummy", async (req) => {
     await req.login("test");
     return false;
@@ -131,7 +131,7 @@ test("auth error", async (t) => {
   const authentication = new Auth();
   const app = express();
   app.use(cookieParser());
-  app.use(authentication.middleware);
+  app.use(authentication.middleware());
   authentication.addAuth("dummy-error", async (req) => {
     return { message: "error message" };
   });
@@ -188,7 +188,7 @@ test(".authenticate manual", async (t) => {
   const authentication = new Auth();
   const app = express();
   app.use(cookieParser());
-  app.use(authentication.middleware);
+  app.use(authentication.middleware());
   authentication.addAuth("dummy", async (req) => {
     if (req.query.password == "hunter2") return "test";
     else return { message: "Invalid password." };
@@ -240,7 +240,7 @@ test("OAuth2", async (t) => {
   const authentication = new Auth();
   const app = express();
   app.use(cookieParser());
-  app.use(authentication.middleware);
+  app.use(authentication.middleware());
   authentication.addAuth(
     "oauth-mock",
     oauth2({
@@ -292,7 +292,7 @@ test("authentication type does not exist", async (t) => {
   const authentication = new Auth();
   const app = express();
   app.use(cookieParser());
-  app.use(authentication.middleware);
+  app.use(authentication.middleware());
   try {
     app.get("/signin", authentication.authenticate("dummy"));
   } catch (error) {

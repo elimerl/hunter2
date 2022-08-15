@@ -96,41 +96,43 @@ export class Auth {
    * ```ts
    * // cookie parser is needed and needs to be before you .use this
    * app.use(cookieParser());
-   * app.use(auth.middleware)
+   * app.use(auth.middleware())
    * ```
    *
    * @see {@link https://www.npmjs.com/package/cookie-parser} needs to be used before this is used.
    */
-  async middleware(
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) {
-    if (
-      req.cookies &&
-      req.cookies["token"] &&
-      (await this.options.sessionStore.exists(req.cookies["token"]))
-    ) {
-      req.user = (await this.options.sessionStore.get(
-        req.cookies["token"]
-      )) as string;
-    } else req.user = null;
-    req.login = async (username) => {
-      const token = nanoid(32);
-      await this.options.sessionStore.set(token, username);
-      res.cookie("token", token, {
-        /* c8 ignore next 3 */
-        secure: this.options.cookie ? this.options.cookie.secure : false,
-        maxAge: this.options.cookie ? this.options.cookie.maxAge : 86400,
-        httpOnly: this.options.cookie ? this.options.cookie.httpOnly : true,
-      });
-    };
-    req.logout = async () => {
-      if (req.cookies && req.cookies["token"])
-        this.options.sessionStore.remove(req.cookies.token);
-      res.clearCookie("token");
-    };
-    return next();
+  middleware() {
+    return (async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ) => {
+      if (
+        req.cookies &&
+        req.cookies["token"] &&
+        (await this.options.sessionStore.exists(req.cookies["token"]))
+      ) {
+        req.user = (await this.options.sessionStore.get(
+          req.cookies["token"]
+        )) as string;
+      } else req.user = null;
+      req.login = async (username) => {
+        const token = nanoid(32);
+        await this.options.sessionStore.set(token, username);
+        res.cookie("token", token, {
+          /* c8 ignore next 3 */
+          secure: this.options.cookie ? this.options.cookie.secure : false,
+          maxAge: this.options.cookie ? this.options.cookie.maxAge : 86400,
+          httpOnly: this.options.cookie ? this.options.cookie.httpOnly : true,
+        });
+      };
+      req.logout = async () => {
+        if (req.cookies && req.cookies["token"])
+          this.options.sessionStore.remove(req.cookies.token);
+        res.clearCookie("token");
+      };
+      return next();
+    }).bind(this);
   }
   /**
    * Register an authentication method.

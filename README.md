@@ -31,7 +31,7 @@ const app = express();
 const port = 3000;
 const authentication = auth();
 app.use(cookieParser());
-app.use(authentication.middleware);
+app.use(authentication.middleware());
 
 authentication.addAuth("local", async (req, res) => {
   // This function returns an error object {message: "error message"} or the username of who is signed in.

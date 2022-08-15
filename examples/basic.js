@@ -7,7 +7,7 @@ const port = 3000;
 const authentication = new Auth();
 app.use(cookieParser());
 // this has to be AFTER cookieParser()
-app.use(authentication.middleware);
+app.use(authentication.middleware());
 
 authentication.addAuth("dummy", async (req) => {
   // This function returns an object {message: "error message"} or the username of who is signed in.

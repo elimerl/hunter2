@@ -24,7 +24,7 @@ const authentication = new Auth({
   sessionStore: redisStore(client),
 });
 app.use(cookieParser());
-app.use(authentication.middleware);
+app.use(authentication.middleware());
 
 authentication.addAuth("local", async (req) => {
   // This function returns an object {message: "error message"} or the username of who is signed in.

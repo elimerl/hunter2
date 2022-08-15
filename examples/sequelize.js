@@ -19,7 +19,7 @@ const app = express();
 const port = 3000;
 const authentication = auth();
 app.use(cookieParser());
-app.use(authentication.middleware);
+app.use(authentication.middleware());
 
 authentication.addAuth("local", async (req) => {
   const username = req.body.username;
